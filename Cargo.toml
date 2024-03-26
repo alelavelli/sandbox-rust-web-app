@@ -1,0 +1,31 @@
+[package]
+name = "sandbox-rust-web-app"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# error handling
+anyhow = "1.0"
+# logging
+tracing = "0.1.40"
+# asyncio
+tokio = "1.36.0"
+# http client
+reqwest = "0.12.2"
+# http server
+axum = "0.7.5"
+# database
+redis = "0.25.2"
+# time
+chrono = "0.4.35"
+# serialization
+serde_json = "1.0"
+# random
+rand = "0.8.5"
+# enums
+strum = "0.26"
+strum_macros = "0.26"
+# itertools
+itertools = "0.12.1"
+# parallelization
+rayon = "1.10.0"
