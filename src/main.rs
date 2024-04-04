@@ -1,4 +1,9 @@
-use axum::{http::StatusCode, response::{Html, IntoResponse}, routing::get, Router};
+use axum::{
+    http::StatusCode,
+    response::{Html, IntoResponse},
+    routing::get,
+    Router,
+};
 use sandbox_rust_web_app::{
     middleware::{add_cors_middleware, add_logging_middleware},
     router::get_user_router,
