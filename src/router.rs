@@ -57,10 +57,7 @@ fn try_thing() -> Result<(), anyhow::Error> {
     anyhow::bail!("it failed!")
 }
 
-async fn get_user(
-    Json(payload): Json<GetUser>
-) -> Result<(StatusCode, Json<User>), AppError>
-{
+async fn get_user(Json(payload): Json<GetUser>) -> Result<(StatusCode, Json<User>), AppError> {
     let user = make_db_query(payload.username)?;
     Ok((StatusCode::OK, Json(user)))
 }
@@ -69,7 +66,6 @@ async fn get_user(
 fn make_db_query(_username: String) -> Result<User, anyhow::Error> {
     anyhow::bail!("internal connection failed")
 }
-
 
 // Make our own error that wraps `anyhow::Error`.
 struct AppError(anyhow::Error);
