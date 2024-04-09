@@ -47,6 +47,6 @@ impl From<JsonRejection> for AppError {
 
 impl From<anyhow::Error> for AppError {
     fn from(value: anyhow::Error) -> Self {
-        Self::InternalServerError(value.into())
+        Self::InternalServerError(value)
     }
 }
