@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 # error handling
 anyhow = "1.0"
+thiserror = "1.0"
 # logging
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
@@ -14,7 +15,7 @@ tokio = {version="1", features = ["full"] }
 # http client
 # reqwest = "0.12.2"
 # http server
-axum = "0.7.5"
+axum = {version = "0.7.5", features = ["macros"]}
 tower = "0.4.13"
 tower-http = { version = "0.5.0", features = ["trace", "cors"] }
 # database
