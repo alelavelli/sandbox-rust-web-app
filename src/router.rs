@@ -1,6 +1,5 @@
 use axum::{
-    routing::{get, post},
-    Json, Router,
+    extract::Path, routing::{get, post}, Json, Router
 };
 
 use crate::{
@@ -13,7 +12,8 @@ pub fn get_user_router() -> Router {
     Router::new()
         .route("/", post(create_user))
         .route("/", get(handler))
-        .route("/user", get(get_user))
+        .route("/all", get(get_user))
+        .route("/:id", get(get_user_by_id))
 }
 
 async fn create_user(
@@ -47,4 +47,14 @@ async fn get_user(Json(payload): Json<GetUser>) -> Result<AppJson<User>, AppErro
 // Mock function that returns an error
 fn make_db_query(_username: String) -> Result<User, anyhow::Error> {
     anyhow::bail!("internal connection failed")
+}
+
+
+async fn get_user_by_id(Path(id): Path<u64>) -> Result<AppJson<User>, AppError> {
+    let user = User {
+        id: id,
+        username: "my user".into(),
+    };
+
+    Ok(AppJson(user))
 }
