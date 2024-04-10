@@ -1,5 +1,7 @@
 use axum::{
-    extract::Path, routing::{get, post}, Json, Router
+    extract::Path,
+    routing::{get, post},
+    Json, Router,
 };
 
 use crate::{
@@ -48,7 +50,6 @@ async fn get_user(Json(payload): Json<GetUser>) -> Result<AppJson<User>, AppErro
 fn make_db_query(_username: String) -> Result<User, anyhow::Error> {
     anyhow::bail!("internal connection failed")
 }
-
 
 async fn get_user_by_id(Path(id): Path<u64>) -> Result<AppJson<User>, AppError> {
     let user = User {
