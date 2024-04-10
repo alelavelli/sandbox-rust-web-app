@@ -53,7 +53,7 @@ fn make_db_query(_username: String) -> Result<User, anyhow::Error> {
 
 async fn get_user_by_id(Path(id): Path<u64>) -> Result<AppJson<User>, AppError> {
     let user = User {
-        id: id,
+        id,
         username: "my user".into(),
     };
 
