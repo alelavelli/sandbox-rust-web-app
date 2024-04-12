@@ -29,6 +29,8 @@ async fn authorize(
     // check username and password on database
     if payload.username.is_empty() | payload.password.is_empty() {
         Err(AuthError::MissingCredentials)?
+    } else if payload.username.cmp(&"sonoio".into()).is_ne() {
+        Err(AuthError::WrongCredentials)?
     } else {
         let claims = JWTAuthClaim {
             exp: 2000000000,
