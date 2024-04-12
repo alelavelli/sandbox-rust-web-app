@@ -3,19 +3,59 @@ use axum::{
     routing::{get, post},
     Json, Router,
 };
+use jsonwebtoken::Header;
 
 use crate::{
-    dtos::{AppJson, CreateUser, GetUser, User},
-    error::AppError,
+    auth::JWTAuthClaim,
+    dtos::{AppJson, CreateUser, GetUser, JWTAuthPayload, JWTAuthResponse, User},
+    error::{AppError, AuthError},
 };
 
 /// Defines the router user that is imported by the main application Router
 pub fn get_user_router() -> Router {
     Router::new()
+        .route("/login", post(authorize))
+        .route("/protected", get(protected_get_user))
         .route("/", post(create_user))
         .route("/", get(handler))
         .route("/all", get(get_user))
         .route("/:id", get(get_user_by_id))
+}
+
+/// Authorize a user with username and password providing jwt token
+async fn authorize(
+    Json(payload): Json<JWTAuthPayload>,
+) -> Result<AppJson<JWTAuthResponse>, AppError> {
+    // check username and password on database
+    if payload.username.is_empty() | payload.password.is_empty() {
+        Err(AuthError::MissingCredentials)?
+    } else {
+        let claims = JWTAuthClaim {
+            exp: 2000000000,
+            user_id: 3,
+            username: "ciao".into(),
+            email: "ciao".into(),
+            company: "ciao".into(),
+        };
+        let token = claims.build_token(&Header::default())?;
+        Ok(AppJson(JWTAuthResponse {
+            token,
+            token_type: "Bearer".into(),
+        }))
+    }
+}
+
+async fn protected_get_user(
+    jwt_claim: JWTAuthClaim,
+    Json(payload): Json<GetUser>,
+) -> Result<AppJson<User>, AppError> {
+    tracing::debug!("Logged with user id {}", jwt_claim.user_id);
+    let user = User {
+        id: jwt_claim.user_id,
+        username: payload.username,
+    };
+
+    Ok(AppJson(user))
 }
 
 async fn create_user(

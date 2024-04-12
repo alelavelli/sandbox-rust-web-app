@@ -23,6 +23,20 @@ where
     }
 }
 
+/// Authorization payload for jwt token
+#[derive(Deserialize)]
+pub struct JWTAuthPayload {
+    pub username: String,
+    pub password: String,
+}
+
+/// Authorization response for jwt token
+#[derive(Serialize)]
+pub struct JWTAuthResponse {
+    pub token: String,
+    pub token_type: String,
+}
+
 // the input to our `create_user` handler
 #[derive(Deserialize)]
 pub struct CreateUser {

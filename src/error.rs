@@ -13,6 +13,8 @@ pub enum AppError {
     JsonRejection(JsonRejection),
     // Internal error
     InternalServerError(anyhow::Error),
+    // Authorization error
+    AuthorizationError(AuthError),
 }
 
 // Tell axum how to convert `AppError` into a response.
@@ -32,6 +34,7 @@ impl IntoResponse for AppError {
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "Something went wrong".into(),
             ),
+            AppError::AuthorizationError(auth_error) => auth_error.to_status_message(),
         };
         (status, AppJson(ErrorResponse { message })).into_response()
     }
@@ -48,5 +51,38 @@ impl From<JsonRejection> for AppError {
 impl From<anyhow::Error> for AppError {
     fn from(value: anyhow::Error) -> Self {
         Self::InternalServerError(value)
+    }
+}
+
+impl From<AuthError> for AppError {
+    fn from(value: AuthError) -> Self {
+        Self::AuthorizationError(value)
+    }
+}
+
+#[derive(Debug)]
+pub enum AuthError {
+    WrongCredentials,
+    MissingCredentials,
+    TokenCreation,
+    InvalidToken,
+}
+
+impl AuthError {
+    fn to_status_message(&self) -> (StatusCode, String) {
+        let (status, message) = match self {
+            AuthError::WrongCredentials => {
+                (StatusCode::UNAUTHORIZED, "Wrong credentials".to_string())
+            }
+            AuthError::MissingCredentials => {
+                (StatusCode::BAD_REQUEST, "Missing credentials".to_string())
+            }
+            AuthError::TokenCreation => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Token creation error".to_string(),
+            ),
+            AuthError::InvalidToken => (StatusCode::BAD_REQUEST, "Invalid token".to_string()),
+        };
+        (status, message)
     }
 }
