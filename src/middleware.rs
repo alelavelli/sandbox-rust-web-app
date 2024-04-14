@@ -23,7 +23,7 @@ pub fn add_cors_middleware(router: Router) -> Router {
 pub fn add_logging_middleware(router: Router) -> Router {
     router.layer(
         TraceLayer::new_for_http()
-            .make_span_with(DefaultMakeSpan::new().include_headers(false))
+            .make_span_with(DefaultMakeSpan::new().include_headers(true))
             .on_request(DefaultOnRequest::new().level(Level::INFO))
             .on_response(
                 DefaultOnResponse::new()

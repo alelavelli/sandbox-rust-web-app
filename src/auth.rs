@@ -11,30 +11,14 @@ use axum_extra::{
     },
     TypedHeader,
 };
-use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
-use once_cell::sync::Lazy;
+use jsonwebtoken::{decode, encode, Header, Validation};
+
 use serde::{Deserialize, Serialize};
 
-use crate::error::{AppError, AuthError};
-
-/// Private keys used to encode and decode jwt tokens
-struct JWTKeys {
-    encoding: EncodingKey,
-    decoding: DecodingKey,
-}
-impl JWTKeys {
-    fn new(secret: &[u8]) -> Self {
-        Self {
-            encoding: EncodingKey::from_secret(secret),
-            decoding: DecodingKey::from_secret(secret),
-        }
-    }
-}
-
-static KEYS: Lazy<JWTKeys> = Lazy::new(|| {
-    let secret = "secret"; //std::env::var("JWT_SECRET").expect("JWT_SECRET must be set");
-    JWTKeys::new(secret.as_bytes())
-});
+use crate::{
+    error::{AppError, AuthError},
+    service::environment::ENVIRONMENT,
+};
 
 /// Struct containing information that will be encoded inside the jwt token
 #[derive(Debug, Serialize, Deserialize)]
@@ -48,7 +32,8 @@ pub struct JWTAuthClaim {
 
 impl JWTAuthClaim {
     pub fn build_token(&self, header: &Header) -> Result<String, AuthError> {
-        let token = encode(header, &self, &KEYS.encoding).map_err(|_| AuthError::TokenCreation)?;
+        let token = encode(header, &self, &ENVIRONMENT.authentication.jwt_encoding)
+            .map_err(|_| AuthError::TokenCreation)?;
         Ok(token)
     }
 }
@@ -68,12 +53,15 @@ where
             .map_err(|_| AuthError::InvalidToken)?;
         tracing::debug!("Got bearer token {}", bearer.token());
         // Decode the user data
-        let token_data =
-            decode::<JWTAuthClaim>(bearer.token(), &KEYS.decoding, &Validation::default())
-                .map_err(|e| {
-                    tracing::error!("Got error {}", e);
-                    AuthError::InvalidToken
-                })?;
+        let token_data = decode::<JWTAuthClaim>(
+            bearer.token(),
+            &ENVIRONMENT.authentication.jwt_decoding,
+            &Validation::default(),
+        )
+        .map_err(|e| {
+            tracing::error!("Got error {}", e);
+            AuthError::InvalidToken
+        })?;
 
         Ok(token_data.claims)
     }
@@ -110,7 +98,6 @@ where
 }
 
 #[derive(Clone, PartialEq, Debug)]
-/// Token holder for Bearer Authentication, most often seen with oauth
 pub struct ApiKey(String);
 
 impl ApiKey {
