@@ -9,9 +9,9 @@ use axum::{
     Json, Router,
 };
 use once_cell::sync::Lazy;
-use tracing::debug;
 
 use crate::error::AppError;
+use crate::facade::sdk as facade;
 
 pub static SDK_ROUTER: Lazy<Router> = Lazy::new(|| {
     Router::new()
@@ -26,13 +26,7 @@ async fn get_user(
     api_key: APIKeyAuthClaim,
     Path(id): Path<u64>,
 ) -> Result<AppJson<sdk_response::User>, AppError> {
-    debug!("Request made with api_key: {}", api_key.key);
-    // make query on database
-    let user = sdk_response::User {
-        id,
-        username: "Antonio".into(),
-    };
-
+    let user = facade::get_user(api_key, id).await;
     Ok(AppJson(user))
 }
 
@@ -41,11 +35,6 @@ async fn create_user(
     api_key: APIKeyAuthClaim,
     Json(payload): Json<sdk_request::CreateUser>,
 ) -> Result<AppJson<sdk_response::User>, AppError> {
-    debug!("Request made with api_key: {}", api_key.key);
-    // insert user in database
-    let user = sdk_response::User {
-        id: 1,
-        username: payload.username,
-    };
+    let user = facade::create_user(api_key, payload).await;
     Ok(AppJson(user))
 }

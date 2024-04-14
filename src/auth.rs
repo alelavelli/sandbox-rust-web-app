@@ -18,13 +18,19 @@ use serde::{Deserialize, Serialize};
 use crate::{
     error::{AppError, AuthError},
     service::environment::ENVIRONMENT,
+    UserId,
 };
+
+/// Trait for auth info objects that need to return specific information
+pub trait AuthInfo {
+    fn user_id(self) -> UserId;
+}
 
 /// Struct containing information that will be encoded inside the jwt token
 #[derive(Debug, Serialize, Deserialize)]
 pub struct JWTAuthClaim {
     pub exp: usize,
-    pub user_id: u64,
+    pub user_id: UserId,
     pub username: String,
     pub email: String,
     pub company: String,
@@ -67,10 +73,18 @@ where
     }
 }
 
+#[async_trait]
+impl AuthInfo for JWTAuthClaim {
+    fn user_id(self) -> UserId {
+        self.user_id
+    }
+}
+
 /// Struct containing api key authentication
 #[derive(Debug, Serialize, Deserialize)]
 pub struct APIKeyAuthClaim {
     pub key: String,
+    pub user_id: UserId,
 }
 
 #[async_trait]
@@ -90,10 +104,18 @@ where
         // ...
 
         let auth_data = APIKeyAuthClaim {
+            user_id: 1,
             key: api_key.key().into(),
         };
 
         Ok(auth_data)
+    }
+}
+
+#[async_trait]
+impl AuthInfo for APIKeyAuthClaim {
+    fn user_id(self) -> UserId {
+        self.user_id
     }
 }
 

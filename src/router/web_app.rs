@@ -11,9 +11,9 @@ use axum::{
 };
 use jsonwebtoken::Header;
 use once_cell::sync::Lazy;
-use tracing::debug;
 
 use crate::error::AppError;
+use crate::facade::web_app as facade;
 
 pub static WEB_APP_ROUTER: Lazy<Router> = Lazy::new(|| {
     Router::new()
@@ -54,13 +54,7 @@ async fn get_user(
     jwt_claim: JWTAuthClaim,
     Path(id): Path<u64>,
 ) -> Result<AppJson<web_app_response::User>, AppError> {
-    debug!("Request made by user: {}", jwt_claim.username);
-    // make query on database
-    let user = web_app_response::User {
-        id,
-        username: "Antonio".into(),
-    };
-
+    let user = facade::get_user(jwt_claim, id).await;
     Ok(AppJson(user))
 }
 
@@ -69,11 +63,6 @@ async fn create_user(
     jwt_claim: JWTAuthClaim,
     Json(payload): Json<web_app_request::CreateUser>,
 ) -> Result<AppJson<web_app_response::User>, AppError> {
-    debug!("Request made by user: {}", jwt_claim.username);
-    // insert user in database
-    let user = web_app_response::User {
-        id: 1,
-        username: payload.username,
-    };
+    let user = facade::create_user(jwt_claim, payload).await;
     Ok(AppJson(user))
 }
