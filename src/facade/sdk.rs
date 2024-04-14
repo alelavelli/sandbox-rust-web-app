@@ -3,19 +3,21 @@ use tracing::debug;
 use crate::{
     auth::AuthInfo,
     dtos::{sdk_request, sdk_response},
+    service::user,
     UserId,
 };
 
 pub async fn get_user(auth_info: impl AuthInfo, user_id: UserId) -> sdk_response::User {
-    // access control over
+    // access control over auth info
     debug!(
         "Making access control for auth_info with user {}",
         auth_info.user_id()
     );
-    // make query on database
+
+    let user_model = user::get_user(&user_id).await;
     sdk_response::User {
-        id: user_id,
-        username: "Antonio".into(),
+        id: user_model.id,
+        username: user_model.username,
     }
 }
 
@@ -23,14 +25,15 @@ pub async fn create_user(
     auth_info: impl AuthInfo,
     payload: sdk_request::CreateUser,
 ) -> sdk_response::User {
-    // access control over
+    // access control over auth info
     debug!(
         "Making access control for auth_info with user {}",
         auth_info.user_id()
     );
-    // make query on database
+
+    let user_model = user::create_user(payload.username).await;
     sdk_response::User {
-        id: 1,
-        username: payload.username,
+        id: user_model.id,
+        username: user_model.username,
     }
 }

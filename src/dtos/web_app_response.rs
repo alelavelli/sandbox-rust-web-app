@@ -1,5 +1,7 @@
 use serde::Serialize;
 
+use crate::UserId;
+
 /// Authorization response for jwt token
 #[derive(Serialize)]
 pub struct JWTAuthResponse {
@@ -9,6 +11,6 @@ pub struct JWTAuthResponse {
 
 #[derive(Serialize)]
 pub struct User {
-    pub id: u64,
+    pub id: UserId,
     pub username: String,
 }

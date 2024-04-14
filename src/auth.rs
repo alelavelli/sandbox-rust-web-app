@@ -23,7 +23,7 @@ use crate::{
 
 /// Trait for auth info objects that need to return specific information
 pub trait AuthInfo {
-    fn user_id(self) -> UserId;
+    fn user_id(&self) -> &UserId;
 }
 
 /// Struct containing information that will be encoded inside the jwt token
@@ -75,8 +75,8 @@ where
 
 #[async_trait]
 impl AuthInfo for JWTAuthClaim {
-    fn user_id(self) -> UserId {
-        self.user_id
+    fn user_id(&self) -> &UserId {
+        &self.user_id
     }
 }
 
@@ -114,8 +114,8 @@ where
 
 #[async_trait]
 impl AuthInfo for APIKeyAuthClaim {
-    fn user_id(self) -> UserId {
-        self.user_id
+    fn user_id(&self) -> &UserId {
+        &self.user_id
     }
 }
 
