@@ -6,7 +6,7 @@ use axum::{
 };
 use sandbox_rust_web_app::{
     middleware::{add_cors_middleware, add_logging_middleware},
-    router::get_user_router,
+    router::{SDK_ROUTER, WEB_APP_ROUTER},
 };
 
 #[tokio::main]
@@ -19,8 +19,12 @@ async fn main() {
     let mut app = Router::new()
         // `GET /` goes to `root`
         .route("/", get(handler))
-        // add router from another module
-        .nest("/user", get_user_router());
+        // SDK v0 user
+        .nest("/sdk/v0", SDK_ROUTER.to_owned())
+        // Web application router
+        .nest("/", WEB_APP_ROUTER.to_owned());
+
+    // add 404 for unknown path
     app = app.fallback(handler_404);
     // Add middlewares to our application
     // layers are accessed from bottom to up

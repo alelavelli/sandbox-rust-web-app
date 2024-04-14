@@ -81,16 +81,16 @@ where
     type Rejection = AppError;
 
     async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
-        let TypedHeader(Authorization(apikey)) = parts
+        let TypedHeader(Authorization(api_key)) = parts
             .extract::<TypedHeader<Authorization<ApiKey>>>()
             .await
             .map_err(|_| AuthError::InvalidToken)?;
 
-        // Make check of this api key is valid
+        // Check if this api key is valid
         // ...
 
         let auth_data = APIKeyAuthClaim {
-            key: apikey.key().into(),
+            key: api_key.key().into(),
         };
 
         Ok(auth_data)
