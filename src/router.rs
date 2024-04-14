@@ -6,7 +6,7 @@ use axum::{
 use jsonwebtoken::Header;
 
 use crate::{
-    auth::JWTAuthClaim,
+    auth::{APIKeyAuthClaim, JWTAuthClaim},
     dtos::{AppJson, CreateUser, GetUser, JWTAuthPayload, JWTAuthResponse, User},
     error::{AppError, AuthError},
 };
@@ -16,6 +16,7 @@ pub fn get_user_router() -> Router {
     Router::new()
         .route("/login", post(authorize))
         .route("/protected", get(protected_get_user))
+        .route("/apikey", get(apikey_get_user))
         .route("/", post(create_user))
         .route("/", get(handler))
         .route("/all", get(get_user))
@@ -56,6 +57,18 @@ async fn protected_get_user(
         id: jwt_claim.user_id,
         username: payload.username,
     };
+
+    Ok(AppJson(user))
+}
+
+async fn apikey_get_user(
+    apikey_claim: APIKeyAuthClaim,
+    Json(payload): Json<GetUser>,
+) -> Result<AppJson<User>, AppError> {
+    tracing::debug!("Logged with user id {}", apikey_claim.key);
+    let mut username = payload.username;
+    username.push_str(&apikey_claim.key);
+    let user = User { id: 2, username };
 
     Ok(AppJson(user))
 }
