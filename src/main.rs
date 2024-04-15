@@ -7,6 +7,7 @@ use axum::{
 use sandbox_rust_web_app::{
     middleware::{add_cors_middleware, add_logging_middleware},
     router::{SDK_ROUTER, WEB_APP_ROUTER},
+    service::db::get_database_service,
 };
 
 #[tokio::main]
@@ -15,6 +16,10 @@ async fn main() {
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::TRACE)
         .init();
+
+    // initialize database service
+    get_database_service().await;
+
     // build our application with a route
     let mut app = Router::new()
         // `GET /` goes to `root`

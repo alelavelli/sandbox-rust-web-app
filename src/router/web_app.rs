@@ -62,7 +62,7 @@ async fn get_user(
 async fn create_user(
     jwt_claim: JWTAuthClaim,
     Json(payload): Json<web_app_request::CreateUser>,
-) -> Result<AppJson<web_app_response::User>, AppError> {
-    let user = facade::create_user(jwt_claim, payload).await;
+) -> Result<AppJson<String>, AppError> {
+    let user = facade::create_user(jwt_claim, payload).await?;
     Ok(AppJson(user))
 }

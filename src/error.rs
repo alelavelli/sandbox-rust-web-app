@@ -8,6 +8,7 @@ use serde::Serialize;
 use crate::dtos::AppJson;
 
 // Make our own error that wraps `anyhow::Error`.
+#[derive(Debug)]
 pub enum AppError {
     // The request body contained invalid JSON
     JsonRejection(JsonRejection),
@@ -57,6 +58,12 @@ impl From<anyhow::Error> for AppError {
 impl From<AuthError> for AppError {
     fn from(value: AuthError) -> Self {
         Self::AuthorizationError(value)
+    }
+}
+
+impl From<mongodb::error::Error> for AppError {
+    fn from(value: mongodb::error::Error) -> Self {
+        Self::InternalServerError(anyhow::Error::new(value))
     }
 }
 
