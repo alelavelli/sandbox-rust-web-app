@@ -15,8 +15,8 @@ pub async fn login(username: &str, password: &str) -> Result<user::User, AppErro
     let db = &get_database_service().await.db;
     let collection = db.collection::<user::User>(user::User::collection_name());
     let hashed_password = hash_password(&password);
-    let filter = doc! { 
-        "username": username, 
+    let filter = doc! {
+        "username": username,
         "password_hash": hashed_password
     };
     let query_result = collection.find_one(filter, None).await?;
