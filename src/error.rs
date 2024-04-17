@@ -76,6 +76,7 @@ pub enum AuthError {
     MissingCredentials,
     TokenCreation,
     InvalidToken,
+    InvalidApiKey,
 }
 
 impl AuthError {
@@ -84,6 +85,8 @@ impl AuthError {
             AuthError::WrongCredentials => {
                 (StatusCode::UNAUTHORIZED, "Wrong credentials".to_string())
             }
+            AuthError::InvalidApiKey => (StatusCode::UNAUTHORIZED, "Wrong credentials".to_string()),
+
             AuthError::MissingCredentials => {
                 (StatusCode::BAD_REQUEST, "Missing credentials".to_string())
             }

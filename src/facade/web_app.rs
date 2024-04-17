@@ -1,12 +1,34 @@
+use jsonwebtoken::Header;
+
 use tracing::debug;
 
 use crate::{
-    auth::AuthInfo,
+    auth::{AuthInfo, JWTAuthClaim},
     dtos::{web_app_request, web_app_response},
     error::AppError,
     service::user,
     UserId,
 };
+
+pub async fn authenticate_user(
+    username: &str,
+    password: &str,
+) -> Result<web_app_response::JWTAuthResponse, AppError> {
+
+    let user_model = user::login(username, password).await?;
+
+    let claims = JWTAuthClaim {
+        exp: 2000000000,
+        user_id: user_model.id.expect("User id must be not missing"),
+        username: user_model.username,
+    };
+    let token = claims.build_token(&Header::default())?;
+    
+    Ok(web_app_response::JWTAuthResponse {
+        token,
+        token_type: "Bearer".into(),
+    })
+}
 
 pub async fn get_user(
     auth_info: impl AuthInfo,
@@ -37,5 +59,5 @@ pub async fn create_user(
         auth_info.user_id()
     );
 
-    user::create_user(payload.username).await
+    user::create_user(payload.username, payload.password).await
 }

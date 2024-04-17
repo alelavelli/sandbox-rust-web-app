@@ -12,4 +12,5 @@ pub struct JWTAuthPayload {
 #[serde(rename_all = "camelCase")]
 pub struct CreateUser {
     pub username: String,
+    pub password: String,
 }

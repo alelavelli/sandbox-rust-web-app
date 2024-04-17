@@ -1,7 +1,6 @@
 use crate::{
     auth::JWTAuthClaim,
     dtos::{web_app_request, web_app_response, AppJson},
-    error::AuthError,
     UserId,
 };
 
@@ -10,7 +9,6 @@ use axum::{
     routing::{get, post},
     Json, Router,
 };
-use jsonwebtoken::Header;
 use once_cell::sync::Lazy;
 
 use crate::error::AppError;
@@ -27,25 +25,9 @@ pub static WEB_APP_ROUTER: Lazy<Router> = Lazy::new(|| {
 async fn authorize(
     Json(payload): Json<web_app_request::JWTAuthPayload>,
 ) -> Result<AppJson<web_app_response::JWTAuthResponse>, AppError> {
-    // check username and password on database
-    if payload.username.is_empty() | payload.password.is_empty() {
-        Err(AuthError::MissingCredentials)?
-    } else if payload.username.cmp(&"Antonio".into()).is_ne() {
-        Err(AuthError::WrongCredentials)?
-    } else {
-        let claims = JWTAuthClaim {
-            exp: 2000000000,
-            user_id: UserId::new(),
-            username: "Antonio".into(),
-            email: "antonio@mail.com".into(),
-            company: "Antonio's industry".into(),
-        };
-        let token = claims.build_token(&Header::default())?;
-        Ok(AppJson(web_app_response::JWTAuthResponse {
-            token,
-            token_type: "Bearer".into(),
-        }))
-    }
+    facade::authenticate_user(&payload.username, &payload.password)
+        .await
+        .map(AppJson)
 }
 
 /// Returns the user if it exists with all the information

@@ -18,6 +18,8 @@ pub struct User {
     )]
     pub id: Option<UserId>,
     pub username: String,
+    pub password_hash: String,
+    pub api_key: Option<String>,
 }
 
 #[async_trait]

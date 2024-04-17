@@ -37,5 +37,5 @@ pub async fn create_user(
         auth_info.user_id()
     );
 
-    user::create_user(payload.username).await
+    user::create_user(payload.username, payload.password).await
 }

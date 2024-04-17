@@ -13,12 +13,16 @@ use axum_extra::{
 };
 use jsonwebtoken::{decode, encode, Header, Validation};
 
-use mongodb::bson::oid::ObjectId;
+use mongodb::bson::doc;
 use serde::{Deserialize, Serialize};
 
 use crate::{
     error::{AppError, AuthError},
-    service::environment::ENVIRONMENT,
+    model::user::User,
+    service::{
+        db::{get_database_service, DatabaseDocument},
+        environment::ENVIRONMENT,
+    },
     UserId,
 };
 
@@ -33,8 +37,6 @@ pub struct JWTAuthClaim {
     pub exp: usize,
     pub user_id: UserId,
     pub username: String,
-    pub email: String,
-    pub company: String,
 }
 
 impl JWTAuthClaim {
@@ -101,15 +103,22 @@ where
             .await
             .map_err(|_| AuthError::InvalidToken)?;
 
-        // Check if this api key is valid
-        // ...
+        let db = &get_database_service().await.db;
+        let collection = db.collection::<User>(User::collection_name());
+        let filter = doc! { "api_key": api_key.key() };
+        let query_result = collection.find_one(filter, None).await?;
+        if let Some(user_document) = query_result {
+            let auth_data = APIKeyAuthClaim {
+                user_id: user_document
+                    .id
+                    .expect("User id must be not missing since we have an api key"),
+                key: api_key.key().into(),
+            };
 
-        let auth_data = APIKeyAuthClaim {
-            user_id: ObjectId::new(),
-            key: api_key.key().into(),
-        };
-
-        Ok(auth_data)
+            Ok(auth_data)
+        } else {
+            Err(AppError::AuthorizationError(AuthError::InvalidApiKey))
+        }
     }
 }
 
