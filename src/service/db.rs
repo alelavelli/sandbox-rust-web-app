@@ -3,6 +3,10 @@ use mongodb::{options::ClientOptions, Client, Database};
 
 use crate::{error::AppError, service::environment::ENVIRONMENT};
 
+use mongodb::bson::oid::ObjectId;
+use mongodb::bson::serde_helpers::serialize_object_id_as_hex_string;
+use serde::Serializer;
+
 use tokio::sync::OnceCell;
 
 // differently from other global variables, database initialization requires async futures
@@ -38,4 +42,17 @@ impl DatabaseService {
 pub trait DatabaseDocument {
     fn collection_name() -> &'static str;
     async fn dump(&self, db: &Database) -> Result<String, AppError>;
+}
+
+pub fn serialize_object_id<S>(
+    object_id: &Option<ObjectId>,
+    serializer: S,
+) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    match object_id {
+        Some(ref object_id) => serialize_object_id_as_hex_string(object_id, serializer),
+        None => serializer.serialize_none(),
+    }
 }

@@ -2,6 +2,7 @@ use crate::{
     auth::JWTAuthClaim,
     dtos::{web_app_request, web_app_response, AppJson},
     error::AuthError,
+    UserId,
 };
 
 use axum::{
@@ -34,7 +35,7 @@ async fn authorize(
     } else {
         let claims = JWTAuthClaim {
             exp: 2000000000,
-            user_id: 3,
+            user_id: UserId::new(),
             username: "Antonio".into(),
             email: "antonio@mail.com".into(),
             company: "Antonio's industry".into(),
@@ -52,9 +53,9 @@ async fn authorize(
 /// Request parameter is extracted from the url
 async fn get_user(
     jwt_claim: JWTAuthClaim,
-    Path(id): Path<u64>,
+    Path(id): Path<UserId>,
 ) -> Result<AppJson<web_app_response::User>, AppError> {
-    let user = facade::get_user(jwt_claim, id).await;
+    let user = facade::get_user(jwt_claim, id).await?;
     Ok(AppJson(user))
 }
 

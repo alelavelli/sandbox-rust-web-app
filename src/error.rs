@@ -16,6 +16,8 @@ pub enum AppError {
     InternalServerError(anyhow::Error),
     // Authorization error
     AuthorizationError(AuthError),
+    // Entity does not exist
+    DoesNotExist(anyhow::Error),
 }
 
 // Tell axum how to convert `AppError` into a response.
@@ -36,6 +38,7 @@ impl IntoResponse for AppError {
                 "Something went wrong".into(),
             ),
             AppError::AuthorizationError(auth_error) => auth_error.to_status_message(),
+            AppError::DoesNotExist(_) => (StatusCode::NOT_FOUND, "Entity not found".into()),
         };
         (status, AppJson(ErrorResponse { message })).into_response()
     }

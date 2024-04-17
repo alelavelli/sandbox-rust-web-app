@@ -1,6 +1,7 @@
 use crate::{
     auth::APIKeyAuthClaim,
     dtos::{sdk_request, sdk_response, AppJson},
+    UserId,
 };
 
 use axum::{
@@ -24,9 +25,9 @@ pub static SDK_ROUTER: Lazy<Router> = Lazy::new(|| {
 /// Request parameter is extracted from the url
 async fn get_user(
     api_key: APIKeyAuthClaim,
-    Path(id): Path<u64>,
+    Path(id): Path<UserId>,
 ) -> Result<AppJson<sdk_response::User>, AppError> {
-    let user = facade::get_user(api_key, id).await;
+    let user = facade::get_user(api_key, id).await?;
     Ok(AppJson(user))
 }
 

@@ -13,6 +13,7 @@ use axum_extra::{
 };
 use jsonwebtoken::{decode, encode, Header, Validation};
 
+use mongodb::bson::oid::ObjectId;
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -104,7 +105,7 @@ where
         // ...
 
         let auth_data = APIKeyAuthClaim {
-            user_id: 1,
+            user_id: ObjectId::new(),
             key: api_key.key().into(),
         };
 
