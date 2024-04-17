@@ -14,7 +14,6 @@ pub async fn authenticate_user(
     username: &str,
     password: &str,
 ) -> Result<web_app_response::JWTAuthResponse, AppError> {
-
     let user_model = user::login(username, password).await?;
 
     let claims = JWTAuthClaim {
@@ -23,7 +22,7 @@ pub async fn authenticate_user(
         username: user_model.username,
     };
     let token = claims.build_token(&Header::default())?;
-    
+
     Ok(web_app_response::JWTAuthResponse {
         token,
         token_type: "Bearer".into(),

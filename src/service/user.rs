@@ -1,7 +1,11 @@
 use anyhow::anyhow;
 use mongodb::bson::doc;
 
-use crate::{error::{AppError, AuthError}, model::user, UserId};
+use crate::{
+    error::{AppError, AuthError},
+    model::user,
+    UserId,
+};
 
 use super::db::{get_database_service, DatabaseDocument};
 use base64ct::{Base64, Encoding};
