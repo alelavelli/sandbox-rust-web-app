@@ -1,6 +1,5 @@
 use anyhow::anyhow;
 use mongodb::bson::doc;
-use tracing::debug;
 
 use crate::{
     error::{AppError, AuthError},
