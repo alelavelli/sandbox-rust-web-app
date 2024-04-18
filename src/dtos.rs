@@ -1,3 +1,9 @@
+//! Data Transferable Objects modules contains definition of json compliant object
+//! that are transferred between application and client.
+//!
+//! Information is shared by `requests` and `responses` and they are specific for each
+//! route, therefore, we have SDK requests and responses and Web app requests and responses.
+
 use axum::{
     extract::FromRequest,
     response::{IntoResponse, Response},

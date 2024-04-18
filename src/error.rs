@@ -7,7 +7,14 @@ use serde::Serialize;
 
 use crate::dtos::AppJson;
 
-// Make our own error that wraps `anyhow::Error`.
+/// AppError enumeration of different error typologies that the application
+/// can return to clients.
+///
+/// It implements the trait `IntoResponse` to translate the error into a response
+/// composed of status and message.
+///
+/// Moreover, it implements several `From<T>` trait to automatically translate
+/// internal errors to AppError using `?`
 #[derive(Debug)]
 pub enum AppError {
     // The request body contained invalid JSON
@@ -28,6 +35,7 @@ impl IntoResponse for AppError {
         struct ErrorResponse {
             message: String,
         }
+        // Define StatusCode and message for every enum variant
         let (status, message) = match self {
             AppError::JsonRejection(rejection) => {
                 // This error is caused by bad user input so don't log it
@@ -70,6 +78,9 @@ impl From<mongodb::error::Error> for AppError {
     }
 }
 
+/// AuthError is an internal error used by authentication modules to explain why
+/// authentication is failed.
+/// They are translated to `AppError` when exposed to the client
 #[derive(Debug)]
 pub enum AuthError {
     WrongCredentials,

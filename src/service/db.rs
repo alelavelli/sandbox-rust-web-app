@@ -10,7 +10,8 @@ use serde::Serializer;
 use tokio::sync::OnceCell;
 
 // differently from other global variables, database initialization requires async futures
-// therefore, we use tokio OnceCell and an async coroutine to initialize or get it.
+// therefore, we use tokio OnceCell and an async coroutine to initialize or get it lazily and
+// only once.
 
 static DATABASE: OnceCell<DatabaseService> = OnceCell::const_new();
 

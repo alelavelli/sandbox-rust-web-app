@@ -13,6 +13,7 @@ pub static ENVIRONMENT: Lazy<EnvironmentVariables> = Lazy::new(EnvironmentVariab
 /// Struct containing application environment variables that is initialized from
 /// environment or accessing external services
 pub struct EnvironmentVariables {
+    pub logging: LoggingVariables,
     pub authentication: AuthenticationVariables,
     pub database: DatabaseVariables,
 }
@@ -26,8 +27,24 @@ impl EnvironmentVariables {
         let deploy_environment =
             std::env::var("DEPLOY_ENVIRONMENT").expect("DEPLOY_ENVIRONMENT must be set");
         EnvironmentVariables {
+            logging: Self::build_logging(&local, &deploy_environment),
             authentication: Self::build_authentication(&local, &deploy_environment),
             database: Self::build_database(&local, &deploy_environment),
+        }
+    }
+
+    /// Build logging variables
+    ///
+    /// they are used by tracing to define correct logging properties
+    fn build_logging(local: &bool, _deploy_environment: &str) -> LoggingVariables {
+        let (level, include_headers) = if *local {
+            (tracing::Level::TRACE, true)
+        } else {
+            (tracing::Level::INFO, false)
+        };
+        LoggingVariables {
+            level,
+            include_headers,
         }
     }
 
@@ -65,6 +82,14 @@ impl EnvironmentVariables {
             db_name,
         }
     }
+}
+
+/// Struct containing logging variables like logging level
+pub struct LoggingVariables {
+    /// application logging level
+    pub level: tracing::Level,
+    /// if true, we include headers in every log coming from a http request
+    pub include_headers: bool,
 }
 
 /// Struct containing variables for authentication

@@ -1,10 +1,15 @@
+//! Middleware module contains functions to add middlewares to a generic Router.
+//!
+//! All the functions receive a `Router` object and return it adding a new `layer`.
+
 use axum::Router;
 use tower_http::{
     cors::{Any, CorsLayer},
     trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer},
     LatencyUnit,
 };
-use tracing::Level;
+
+use crate::service::environment::ENVIRONMENT;
 
 /// Create CorsLayer for application
 ///
@@ -23,11 +28,13 @@ pub fn add_cors_middleware(router: Router) -> Router {
 pub fn add_logging_middleware(router: Router) -> Router {
     router.layer(
         TraceLayer::new_for_http()
-            .make_span_with(DefaultMakeSpan::new().include_headers(true))
-            .on_request(DefaultOnRequest::new().level(Level::INFO))
+            .make_span_with(
+                DefaultMakeSpan::new().include_headers(ENVIRONMENT.logging.include_headers),
+            )
+            .on_request(DefaultOnRequest::new().level(ENVIRONMENT.logging.level))
             .on_response(
                 DefaultOnResponse::new()
-                    .level(Level::INFO)
+                    .level(ENVIRONMENT.logging.level)
                     .latency_unit(LatencyUnit::Micros),
             ),
     )
