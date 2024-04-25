@@ -5,7 +5,7 @@ use amqprs::{
     BasicProperties,
 };
 
-pub async fn send_message(queue_name: &str, content: String) -> Result<(), amqprs::error::Error> {
+pub async fn send_message(queue_name: &str, content: String) -> Result<(), AppError> {
     // open a connection to RabbitMQ server
     let connection = Connection::open(&OpenConnectionArguments::default()).await?;
     connection

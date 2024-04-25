@@ -52,8 +52,6 @@ impl IntoResponse for AppError {
     }
 }
 
-// This enables using `?` on functions that return `Result<_, anyhow::Error>` to turn them into
-// `Result<_, AppError>`. That way you don't need to do that manually.
 impl From<JsonRejection> for AppError {
     fn from(value: JsonRejection) -> Self {
         Self::JsonRejection(value)
