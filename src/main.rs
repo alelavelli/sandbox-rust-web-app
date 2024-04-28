@@ -9,12 +9,19 @@ use sandbox_rust_web_app::{
     router::{SDK_ROUTER, WEB_APP_ROUTER},
     service::{db::get_database_service, environment::ENVIRONMENT},
 };
+use tracing_subscriber::fmt::writer::MakeWriterExt;
 
 #[tokio::main]
 async fn main() {
+    let logfile = tracing_appender::rolling::hourly(".logs", "application_logs");
+    let (non_blocking, _guard) = tracing_appender::non_blocking(logfile);
+    let stdout = std::io::stdout.with_max_level(ENVIRONMENT.logging.level);
+
     // initialize tracing logging with level defined by the environment service
     tracing_subscriber::fmt()
         .with_max_level(ENVIRONMENT.logging.level)
+        .with_ansi(false)
+        .with_writer(stdout.and(non_blocking))
         .init();
 
     // initialize database service

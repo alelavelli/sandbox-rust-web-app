@@ -9,7 +9,8 @@ anyhow = "1.0"
 thiserror = "1.0"
 # logging
 tracing = "0.1.40"
-tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tracing-subscriber = { version = "0.3", features = ["std", "env-filter"] }
+tracing-appender = "0.2.3"
 # asyncio
 tokio = {version="1", features = ["full"] }
 # http client
