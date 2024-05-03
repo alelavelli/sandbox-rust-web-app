@@ -55,3 +55,56 @@ pub async fn create_user(username: String, password: String) -> Result<String, A
 fn hash_password(password: &str) -> String {
     Base64::encode_string(password.as_bytes())
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        model::user,
+        service::{
+            db::{get_database_service, DatabaseDocument},
+            user::{create_user, hash_password},
+        },
+    };
+
+    use super::login;
+
+    #[tokio::test]
+    async fn create_user_test() {
+        let username = "John".into();
+        let password = "Smith".into();
+
+        let created_user_result = create_user(username, password).await;
+        assert!(created_user_result.is_ok());
+        let drop_result = get_database_service().await.db.drop(None).await;
+        assert!(drop_result.is_ok())
+    }
+
+    #[tokio::test]
+    async fn login_test() {
+        let username = "John";
+        let password = "Smith";
+
+        // No users
+        let result = login(username, password).await;
+        assert!(result.is_err());
+
+        // Add users and retrieve them
+        let user_id_result = user::User {
+            id: None,
+            username: username.into(),
+            password_hash: hash_password(password),
+            api_key: None,
+        }
+        .dump(&get_database_service().await.db)
+        .await;
+        assert!(user_id_result.is_ok());
+
+        // Remake the query
+        let result = login(username, password).await;
+        assert!(result.is_ok());
+        let user = result.unwrap();
+        assert_eq!(username, user.username);
+        let drop_result = get_database_service().await.db.drop(None).await;
+        assert!(drop_result.is_ok())
+    }
+}

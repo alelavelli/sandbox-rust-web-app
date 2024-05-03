@@ -44,6 +44,11 @@ mongodb = "2.8.2"
 # utils
 regex = "1.10.4"
 # endcoding
-base64ct = {version = "1.6.0", features = ["alloc"] }
+base64ct = { version = "1.6.0", features = ["alloc"] }
 # queue rabbitmq
 amqprs = "1.5.4"
+uuid = { version = "1.8.0", features = ["v4"] }
+
+[dev-dependencies]
+mockall = "0.12.1"
+mockall_double = "0.3.1"

@@ -6,6 +6,9 @@
 
 use jsonwebtoken::{DecodingKey, EncodingKey};
 use once_cell::sync::Lazy;
+use tracing::Level;
+use uuid::Uuid;
+
 
 /// ENVIRONMENT struct containing application variables
 pub static ENVIRONMENT: Lazy<EnvironmentVariables> = Lazy::new(EnvironmentVariables::new);
@@ -21,15 +24,39 @@ pub struct EnvironmentVariables {
 impl EnvironmentVariables {
     /// Create new instance of this struct by invoking the different builds functions
     fn new() -> Self {
-        let local = std::env::var("LOCAL")
-            .map(|value| value.to_lowercase().cmp(&"true".to_string()).is_eq())
-            .unwrap_or(false);
-        let deploy_environment =
-            std::env::var("DEPLOY_ENVIRONMENT").expect("DEPLOY_ENVIRONMENT must be set");
-        EnvironmentVariables {
-            logging: Self::build_logging(&local, &deploy_environment),
-            authentication: Self::build_authentication(&local, &deploy_environment),
-            database: Self::build_database(&local, &deploy_environment),
+        // during testing use hardcoded custom env variables
+        if cfg!(test) {
+            let secret = "testing_secret";
+
+            let id = Uuid::new_v4().to_string();
+            let mut db_name = String::from("app-test-db-");
+            db_name.push_str(&id);
+            
+            EnvironmentVariables {
+                logging: LoggingVariables {
+                    level: Level::TRACE,
+                    include_headers: true,
+                },
+                authentication: AuthenticationVariables {
+                    jwt_encoding: EncodingKey::from_secret(secret.as_bytes()),
+                    jwt_decoding: DecodingKey::from_secret(secret.as_bytes()),
+                },
+                database: DatabaseVariables {
+                    connection_string: format!("mongodb://localhost:27017/{}", db_name),
+                    db_name,
+                },
+            }
+        } else {
+            let local = std::env::var("LOCAL")
+                .map(|value| value.to_lowercase().cmp(&"true".to_string()).is_eq())
+                .unwrap_or(false);
+            let deploy_environment =
+                std::env::var("DEPLOY_ENVIRONMENT").expect("DEPLOY_ENVIRONMENT must be set");
+            EnvironmentVariables {
+                logging: Self::build_logging(&local, &deploy_environment),
+                authentication: Self::build_authentication(&local, &deploy_environment),
+                database: Self::build_database(&local, &deploy_environment),
+            }
         }
     }
 
