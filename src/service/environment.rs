@@ -9,7 +9,6 @@ use once_cell::sync::Lazy;
 use tracing::Level;
 use uuid::Uuid;
 
-
 /// ENVIRONMENT struct containing application variables
 pub static ENVIRONMENT: Lazy<EnvironmentVariables> = Lazy::new(EnvironmentVariables::new);
 
@@ -31,7 +30,7 @@ impl EnvironmentVariables {
             let id = Uuid::new_v4().to_string();
             let mut db_name = String::from("app-test-db-");
             db_name.push_str(&id);
-            
+
             EnvironmentVariables {
                 logging: LoggingVariables {
                     level: Level::TRACE,
