@@ -1,0 +1,168 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "Rust Web App",
+    "collectionId": "70fa4111-2622-4786-b330-1e545b604822",
+    "dateExported": "2024-05-06T05:43:49.025Z",
+    "version": "1.2",
+    "folders": [
+        {
+            "_id": "d4a960a6-4664-47ef-8891-255b7fa0633d",
+            "name": "SDK",
+            "containerId": "",
+            "created": "2024-04-14T14:53:35.724Z",
+            "sortNum": 10000
+        },
+        {
+            "_id": "26c75b98-0e43-400e-b507-3306d02af172",
+            "name": "WEB APP",
+            "containerId": "",
+            "created": "2024-04-14T15:13:50.542Z",
+            "sortNum": 20000
+        }
+    ],
+    "requests": [
+        {
+            "_id": "fe3072e9-95fc-4779-85c7-4f34052e9a98",
+            "colId": "70fa4111-2622-4786-b330-1e545b604822",
+            "containerId": "26c75b98-0e43-400e-b507-3306d02af172",
+            "name": "user",
+            "url": "localhost:3000/user/661f6e3da0822ec29c5aa4e1",
+            "method": "GET",
+            "sortNum": 5000,
+            "created": "2024-04-14T15:13:59.873Z",
+            "modified": "2024-04-17T06:51:34.164Z",
+            "headers": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDAsInVzZXJfaWQiOnsiJG9pZCI6IjY2MWY2ZTNkYTA4MjJlYzI5YzVhYTRlMSJ9LCJ1c2VybmFtZSI6IkV2YSJ9.EuYZVKDY_Rdszz9oMo77gggZKLu4yXrGTyUo5yMGBqg"
+            },
+            "tests": [
+                {
+                    "type": "res-code",
+                    "custom": "",
+                    "action": "equal",
+                    "value": "200"
+                }
+            ]
+        },
+        {
+            "_id": "5a25075e-b432-4924-8c67-ef3efac713af",
+            "colId": "70fa4111-2622-4786-b330-1e545b604822",
+            "containerId": "d4a960a6-4664-47ef-8891-255b7fa0633d",
+            "name": "user",
+            "url": "localhost:3000/sdk/v0/user/661f6db288f8ba1ab47bb4a7",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2024-04-14T14:50:01.617Z",
+            "modified": "2024-04-17T06:37:24.203Z",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "x-api-key my-api-key"
+                }
+            ],
+            "tests": [
+                {
+                    "type": "res-code",
+                    "custom": "",
+                    "action": "equal",
+                    "value": "200"
+                }
+            ]
+        },
+        {
+            "_id": "e337fa4e-f0b6-4f37-a5fc-4d659d71aa3f",
+            "colId": "70fa4111-2622-4786-b330-1e545b604822",
+            "containerId": "26c75b98-0e43-400e-b507-3306d02af172",
+            "name": "user",
+            "url": "localhost:3000/user",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2024-04-14T15:13:56.423Z",
+            "modified": "2024-04-17T06:52:17.301Z",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"username\": \"Abele\",\n  \"password\": \"abele\"\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDAsInVzZXJfaWQiOnsiJG9pZCI6IjY2MWY2ZTNkYTA4MjJlYzI5YzVhYTRlMSJ9LCJ1c2VybmFtZSI6IkV2YSJ9.EuYZVKDY_Rdszz9oMo77gggZKLu4yXrGTyUo5yMGBqg"
+            },
+            "tests": [
+                {
+                    "type": "res-code",
+                    "custom": "",
+                    "action": "equal",
+                    "value": "200"
+                }
+            ]
+        },
+        {
+            "_id": "29410d9f-f400-414b-8706-66e348432fe4",
+            "colId": "70fa4111-2622-4786-b330-1e545b604822",
+            "containerId": "d4a960a6-4664-47ef-8891-255b7fa0633d",
+            "name": "user",
+            "url": "localhost:3000/sdk/v0/user",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2024-04-14T14:53:57.579Z",
+            "modified": "2024-04-17T06:37:49.583Z",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Authorization",
+                    "value": "x-api-key my-api-key"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"username\": \"Eva\",\n  \"password\": \"ilgiardino\"\n}",
+                "form": []
+            },
+            "tests": [
+                {
+                    "type": "res-code",
+                    "custom": "",
+                    "action": "equal",
+                    "value": "200"
+                }
+            ]
+        },
+        {
+            "_id": "72e40c9f-1716-4be7-9a9e-118532b83fdc",
+            "colId": "70fa4111-2622-4786-b330-1e545b604822",
+            "containerId": "26c75b98-0e43-400e-b507-3306d02af172",
+            "name": "login",
+            "url": "localhost:3000/login",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2024-04-14T15:15:23.494Z",
+            "modified": "2024-04-17T06:38:36.154Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"username\": \"Eva\",\n  \"password\": \"ilgiardino\"\n}",
+                "form": []
+            },
+            "tests": [
+                {
+                    "type": "res-code",
+                    "custom": "",
+                    "action": "equal",
+                    "value": "200"
+                }
+            ]
+        }
+    ],
+    "ref": "np6yguL-9ABJWxin4PbrsAVkzTxQ4DHE4Ug8cg7m5qEI401LnhsNiyA2kQPvgEf9O33UnxqOBr9tDprbrwPOrg"
+}
