@@ -1,0 +1,5 @@
+.hooks
+.logs
+.vscode
+target
+tests
