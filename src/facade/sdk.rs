@@ -4,9 +4,9 @@ use crate::{
     auth::AuthInfo,
     dtos::{sdk_request, sdk_response},
     error::AppError,
+    service::access_control::AccessControl,
     service::user,
     UserId,
-    service::access_control::AccessControl
 };
 
 pub async fn get_user(

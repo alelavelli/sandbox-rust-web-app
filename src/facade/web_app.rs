@@ -6,9 +6,9 @@ use crate::{
     auth::{AuthInfo, JWTAuthClaim},
     dtos::{web_app_request, web_app_response},
     error::AppError,
+    service::access_control::AccessControl,
     service::user,
     UserId,
-    service::access_control::AccessControl
 };
 
 pub async fn authenticate_user(

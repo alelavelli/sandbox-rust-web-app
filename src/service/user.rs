@@ -2,7 +2,10 @@ use anyhow::anyhow;
 use mongodb::bson::doc;
 
 use crate::{
-    enums::Role, error::{AppError, AuthError}, model::user, UserId
+    enums::Role,
+    error::{AppError, AuthError},
+    model::user,
+    UserId,
 };
 
 use super::db::{get_database_service, DatabaseDocument};
@@ -39,13 +42,17 @@ pub async fn get_user(user_id: &UserId) -> Result<user::User, AppError> {
 }
 
 /// Create new user in database and returns it identifier
-pub async fn create_user(username: String, password: String, role: Role) -> Result<String, AppError> {
+pub async fn create_user(
+    username: String,
+    password: String,
+    role: Role,
+) -> Result<String, AppError> {
     let user_model = user::User {
         id: None,
         username,
         password_hash: hash_password(&password),
         api_key: None,
-        role
+        role,
     };
     let db_service = get_database_service().await;
     user_model.dump(&db_service.db).await
@@ -58,10 +65,12 @@ fn hash_password(password: &str) -> String {
 #[cfg(test)]
 mod tests {
     use crate::{
-        enums::Role, model::user, service::{
+        enums::Role,
+        model::user,
+        service::{
             db::{get_database_service, DatabaseDocument},
             user::{create_user, hash_password},
-        }
+        },
     };
 
     use super::login;
@@ -70,7 +79,7 @@ mod tests {
     async fn create_user_test() {
         let username = "John".into();
         let password = "Smith".into();
-        let role = Role::ADMIN;
+        let role = Role::Admin;
 
         let created_user_result = create_user(username, password, role).await;
         assert!(created_user_result.is_ok());
@@ -82,7 +91,7 @@ mod tests {
     async fn login_test() {
         let username = "John";
         let password = "Smith";
-        let role = Role::ADMIN;
+        let role = Role::Admin;
 
         // No users
         let result = login(username, password).await;
@@ -94,7 +103,7 @@ mod tests {
             username: username.into(),
             password_hash: hash_password(password),
             api_key: None,
-            role
+            role,
         }
         .dump(&get_database_service().await.db)
         .await;

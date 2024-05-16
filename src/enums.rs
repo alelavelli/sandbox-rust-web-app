@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
 pub enum Role {
     /// Basic user
-    USER,
+    User,
     /// Admin user
-    ADMIN
+    Admin,
 }

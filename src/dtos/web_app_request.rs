@@ -15,5 +15,5 @@ pub struct JWTAuthPayload {
 pub struct CreateUser {
     pub username: String,
     pub password: String,
-    pub role: Role
+    pub role: Role,
 }

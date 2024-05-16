@@ -2,9 +2,8 @@ use crate::{auth::AuthInfo, enums::Role, error::AppError, service::user::get_use
 
 /// Access control struct that validate and verify the
 /// role of the user
-pub struct AccessControl<T: AuthInfo> 
-{
-    auth_info: T
+pub struct AccessControl<T: AuthInfo> {
+    auth_info: T,
 }
 
 impl<T: AuthInfo> AccessControl<T> {
@@ -16,8 +15,8 @@ impl<T: AuthInfo> AccessControl<T> {
     pub async fn is_admin(self) -> Result<Self, AppError> {
         let user = get_user(self.auth_info.user_id()).await?;
         match user.role {
-            Role::ADMIN => Ok(self),
-            _ => Err(AppError::AccessControlError)
+            Role::Admin => Ok(self),
+            _ => Err(AppError::AccessControlError),
         }
     }
 }

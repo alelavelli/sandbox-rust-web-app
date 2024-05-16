@@ -10,7 +10,7 @@
 //!     - application services are part of the actual application and may use support services.
 //!
 
+pub mod access_control;
 pub mod db;
 pub mod environment;
 pub mod user;
-pub mod access_control;

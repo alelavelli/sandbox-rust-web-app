@@ -10,7 +10,6 @@ use axum::{
     Json, Router,
 };
 use once_cell::sync::Lazy;
-use tracing::debug;
 
 use crate::error::AppError;
 use crate::facade::sdk as facade;
