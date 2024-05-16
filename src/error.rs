@@ -17,14 +17,16 @@ use crate::dtos::AppJson;
 /// internal errors to AppError using `?`
 #[derive(Debug)]
 pub enum AppError {
-    // The request body contained invalid JSON
+    /// The request body contained invalid JSON
     JsonRejection(JsonRejection),
-    // Internal error
+    /// Internal error
     InternalServerError(anyhow::Error),
-    // Authorization error
+    /// Authorization error
     AuthorizationError(AuthError),
-    // Entity does not exist
+    /// Entity does not exist
     DoesNotExist(anyhow::Error),
+    /// The user does not have role to perform the operation
+    AccessControlError
 }
 
 // Tell axum how to convert `AppError` into a response.
@@ -47,6 +49,7 @@ impl IntoResponse for AppError {
             ),
             AppError::AuthorizationError(auth_error) => auth_error.to_status_message(),
             AppError::DoesNotExist(_) => (StatusCode::NOT_FOUND, "Entity not found".into()),
+            AppError::AccessControlError => (StatusCode::UNAUTHORIZED, "Not sufficient permissions".into())
         };
         (status, AppJson(ErrorResponse { message })).into_response()
     }

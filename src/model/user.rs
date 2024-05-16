@@ -3,9 +3,7 @@ use mongodb::Database;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    error::AppError,
-    service::db::{serialize_object_id, DatabaseDocument},
-    UserId,
+    enums::Role, error::AppError, service::db::{serialize_object_id, DatabaseDocument}, UserId
 };
 
 /// Struct representing user model
@@ -20,6 +18,7 @@ pub struct User {
     pub username: String,
     pub password_hash: String,
     pub api_key: Option<String>,
+    pub role: Role
 }
 
 #[async_trait]

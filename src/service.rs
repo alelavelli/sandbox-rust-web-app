@@ -13,3 +13,4 @@
 pub mod db;
 pub mod environment;
 pub mod user;
+pub mod access_control;

@@ -20,7 +20,7 @@ async fn main() {
     // initialize tracing logging with level defined by the environment service
     tracing_subscriber::fmt()
         .with_max_level(ENVIRONMENT.logging.level)
-        .with_ansi(false)
+        .with_ansi(true)
         .with_writer(stdout.and(non_blocking))
         .init();
 
